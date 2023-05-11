@@ -16,13 +16,17 @@ namespace Activity.Controllers
         public async Task<IActionResult> Index()
         {
             var todos = await _repository.GetTodosAsync();
-            return View(todos);
+            return Ok(todos);
         }
 
         public async Task<IActionResult> Details(int id)
         {
             var todo = await _repository.GetTodoAsync(id);
-            return View(todo);
+            if (todo == null)
+            {
+                return NotFound();
+            }
+            return Ok(todo);
         }
 
         public IActionResult Create()
@@ -34,17 +38,21 @@ namespace Activity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Todo todo)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _repository.CreateTodoAsync(todo);
-                return RedirectToAction(nameof(Index));
+                return CreatedAtAction(nameof(Index), new { id = todo.Id }, todo);
             }
-            return View(todo);
+            return BadRequest(ModelState);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             var todo = await _repository.GetTodoAsync(id);
+            if (todo == null)
+            {
+                return NotFound();
+            }
             return View(todo);
         }
 
@@ -52,17 +60,21 @@ namespace Activity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Todo todo)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _repository.UpdateTodoAsync(todo);
                 return RedirectToAction(nameof(Index));
             }
-            return View(todo);
+            return BadRequest(ModelState);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
             var todo = await _repository.GetTodoAsync(id);
+            if (todo == null)
+            {
+                return NotFound();
+            }
             return View(todo);
         }
 

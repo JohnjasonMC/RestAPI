@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Activity.Repository
 {
-    public class TodoRestRepository
+    public class TodoRestRepository : ITodoRestRepository
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
